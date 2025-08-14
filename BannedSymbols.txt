@@ -1,0 +1,108 @@
+# Universal Banned APIs for .NET Security
+# These APIs are prohibited due to security vulnerabilities or unsafe practices
+
+# Dangerous Deserialization
+T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter; Use Json.NET or System.Text.Json instead
+T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter; Use Json.NET or System.Text.Json instead
+T:System.Web.UI.LosFormatter; Use Json.NET or System.Text.Json instead
+T:System.Web.UI.ObjectStateFormatter; Use Json.NET or System.Text.Json instead
+T:System.Runtime.Serialization.NetDataContractSerializer; Use DataContractSerializer with known types
+T:System.Web.Script.Serialization.JavaScriptSerializer; Use Json.NET or System.Text.Json instead
+
+# Weak Cryptography
+T:System.Security.Cryptography.MD5; Use SHA256 or higher
+T:System.Security.Cryptography.SHA1; Use SHA256 or higher  
+T:System.Security.Cryptography.DES; Use AES instead
+T:System.Security.Cryptography.RC2; Use AES instead
+T:System.Security.Cryptography.TripleDES; Use AES instead
+M:System.Security.Cryptography.RNGCryptoServiceProvider.#ctor(); Use RandomNumberGenerator.Create()
+
+# Insecure Random
+T:System.Random; Use System.Security.Cryptography.RandomNumberGenerator for security-sensitive scenarios
+M:System.Guid.NewGuid(); Use cryptographically secure random for security tokens
+
+# SQL Injection Risks
+M:System.Data.SqlClient.SqlCommand.#ctor(System.String); Use parameterized queries
+M:System.Data.SqlClient.SqlDataAdapter.#ctor(System.String,System.String); Use parameterized queries
+M:System.Data.Common.DbCommand.CommandText; Ensure parameterized queries are used
+
+# XSS and Path Traversal
+M:System.Web.HttpResponse.Write(System.String); Use HTML encoding
+M:System.Web.HttpResponse.WriteFile(System.String); Validate file paths
+M:System.IO.File.OpenRead(System.String); Validate file paths
+M:System.IO.File.ReadAllText(System.String); Validate file paths
+M:System.IO.Directory.GetFiles(System.String); Validate directory paths
+
+# Weak SSL/TLS
+F:System.Net.SecurityProtocolType.Ssl3; Use TLS 1.2 or higher
+F:System.Net.SecurityProtocolType.Tls; Use TLS 1.2 or higher
+F:System.Net.SecurityProtocolType.Tls11; Use TLS 1.2 or higher
+
+# Certificate Validation Issues
+M:System.Net.ServicePointManager.ServerCertificateValidationCallback; Implement proper certificate validation
+P:System.Net.Http.HttpClientHandler.ServerCertificateCustomValidationCallback; Implement proper certificate validation
+
+# Process Execution Risks
+T:System.Diagnostics.Process; Validate all inputs carefully
+M:System.Diagnostics.Process.Start(System.String); Validate executable path and arguments
+
+# Reflection Security Risks
+M:System.Reflection.Assembly.LoadFrom(System.String); Use Assembly.LoadFile with validation
+M:System.Reflection.Assembly.LoadFile(System.String); Validate assembly before loading
+M:System.Activator.CreateInstance(System.String,System.String); Validate type names
+
+# Authentication Bypass
+M:System.Web.Security.FormsAuthentication.SetAuthCookie(System.String,System.Boolean); Ensure proper authentication
+M:System.Web.Security.FormsAuthentication.RedirectFromLoginPage(System.String,System.Boolean); Validate redirect URLs
+
+# Information Disclosure
+M:System.Exception.ToString(); Consider using custom error messages in production
+M:System.Web.HttpContext.Server.GetLastError(); Log errors securely
+
+# Dangerous String Operations
+M:System.String.Format(System.String,System.Object[]); Use parameterized formatting or string interpolation
+M:System.Text.StringBuilder.AppendFormat(System.String,System.Object[]); Use parameterized formatting
+
+# Web-specific Security Issues
+M:System.Web.HttpRequest.Form.get_Item(System.String); Validate and encode user input
+M:System.Web.HttpRequest.QueryString.get_Item(System.String); Validate and encode user input
+M:System.Web.HttpRequest.Params.get_Item(System.String); Validate and encode user input
+
+# Cookie Security
+M:System.Web.HttpCookieCollection.Add(System.Web.HttpCookie); Ensure HttpOnly and Secure flags are set
+M:System.Web.HttpResponse.Cookies.Add(System.Web.HttpCookie); Ensure HttpOnly and Secure flags are set
+
+# Dynamic Code Execution
+M:System.CodeDom.Compiler.CodeDomProvider.CompileAssemblyFromSource(System.CodeDom.Compiler.CompilerParameters,System.String[]); Avoid dynamic code compilation
+M:Microsoft.CSharp.CSharpCodeProvider.CompileAssemblyFromSource(System.CodeDom.Compiler.CompilerParameters,System.String[]); Avoid dynamic code compilation
+
+# Hardcoded Secrets (patterns that suggest hardcoded values)
+M:System.Configuration.ConfigurationManager.AppSettings.get_Item(System.String); Use secure configuration management
+M:System.Configuration.ConfigurationManager.ConnectionStrings.get_Item(System.String); Use secure configuration management
+
+# Threading Issues
+M:System.Threading.Thread.Suspend(); Use higher-level synchronization primitives
+M:System.Threading.Thread.Resume(); Use higher-level synchronization primitives
+M:System.Threading.Thread.Abort(); Use CancellationToken instead
+
+# Performance Anti-patterns
+M:System.GC.Collect(); Let GC manage memory automatically
+M:System.GC.WaitForPendingFinalizers(); Let GC manage memory automatically
+
+# Obsolete and Dangerous APIs
+M:System.AppDomain.SetPrincipalPolicy(System.Security.Principal.PrincipalPolicy); Use modern authentication
+M:System.Security.Permissions.CodeAccessPermission.Assert(); Use principle of least privilege
+M:System.Runtime.InteropServices.Marshal.GetLastWin32Error(); Use Marshal.GetLastPInvokeError() in .NET 5+
+
+# Entity Framework Raw SQL
+M:Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.ExecuteSqlRaw(Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade,System.String,System.Object[]); Use ExecuteSqlInterpolated or parameterized queries
+M:Microsoft.EntityFrameworkCore.RelationalQueryableExtensions.FromSqlRaw(Microsoft.EntityFrameworkCore.DbSet,System.String,System.Object[]); Use FromSqlInterpolated or parameterized queries
+
+# ASP.NET Core Security
+M:Microsoft.AspNetCore.Mvc.Controller.Json(System.Object); Consider using secure JSON serialization settings
+M:Microsoft.AspNetCore.Http.HttpResponse.WriteAsync(System.String); Ensure content is properly encoded
+
+# Newtonsoft.Json Security Issues
+M:Newtonsoft.Json.JsonConvert.DeserializeObject(System.String); Use typed deserialization with secure settings
+M:Newtonsoft.Json.JsonConvert.DeserializeObject(System.String,System.Type); Use typed deserialization with secure settings
+P:Newtonsoft.Json.JsonSerializerSettings.TypeNameHandling; Do not use TypeNameHandling.All or TypeNameHandling.Auto

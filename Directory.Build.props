@@ -1,0 +1,98 @@
+<Project>
+  <!-- 
+    Universal .NET API Quality Configuration Template
+    Apply this to any .NET API project for comprehensive code quality
+    
+    Usage: Copy to solution root or place in parent directory
+  -->
+
+  <PropertyGroup>
+    <!-- Target Frameworks -->
+    <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net8.0;net9.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors>CS1591</WarningsNotAsErrors>
+    
+    <!-- Enhanced Build Configuration -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    
+    <!-- Performance Optimizations -->
+    <PublishTrimmed>true</PublishTrimmed>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <TrimUnusedDependencies>true</TrimUnusedDependencies>
+    
+    <!-- Security Configuration -->
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>$(MSBuildThisFileDirectory)CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <AdditionalFileItemNames>$(AdditionalFileItemNames);BannedSymbols</AdditionalFileItemNames>
+  </PropertyGroup>
+
+  <!-- Code Quality Analyzers -->
+  <ItemGroup>
+    <!-- Core .NET Analyzers -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0" PrivateAssets="all" />
+    
+    <!-- Security Analyzers -->
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.7" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers" Version="3.3.4" PrivateAssets="all" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.32.0.97167" PrivateAssets="all" />
+    
+    <!-- Performance Analyzers -->
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.8.14" PrivateAssets="all" />
+    <PackageReference Include="Meziantou.Analyzer" Version="2.0.163" PrivateAssets="all" />
+    
+    <!-- Code Quality and Style -->
+    <PackageReference Include="Roslynator.Analyzers" Version="4.12.4" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Formatting.Analyzers" Version="4.12.4" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Banned APIs Configuration -->
+  <ItemGroup>
+    <BannedSymbols Include="$(MSBuildThisFileDirectory)BannedSymbols.txt" />
+  </ItemGroup>
+
+  <!-- ASP.NET Core Specific Configuration -->
+  <PropertyGroup Condition="'$(UseAspNetCore)' == 'true'">
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+  </PropertyGroup>
+
+  <!-- Release Optimizations -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+  <!-- Development Configuration -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <!-- Package Metadata Template -->
+  <PropertyGroup>
+    <Company>$(MSBuildProjectName)</Company>
+    <Product>$(MSBuildProjectName)</Product>
+    <Copyright>Copyright © $(Company) $([System.DateTime]::Now.Year)</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+</Project>

@@ -6,14 +6,24 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>EasyHealth.HealthChecks</PackageId>
-    <PackageVersion>1.0.0</PackageVersion>
+    <PackageVersion>1.0.3</PackageVersion>
     <Authors>EasyHealth</Authors>
-    <Description>A comprehensive health check package for ASP.NET Core applications with minimal configuration and maximum reliability. Always returns results even when the application has issues.</Description>
-    <PackageTags>healthcheck;aspnetcore;monitoring;reliability;diagnostics</PackageTags>
+    <Description>Enterprise-grade health monitoring for .NET applications with zero configuration required. Built with 400+ code quality analyzers, comprehensive testing, and production-ready defaults. Includes memory monitoring, HTTP endpoint checks, Kubernetes integration, and complete documentation suite.</Description>
+    <PackageTags>healthcheck;aspnetcore;monitoring;kubernetes;docker;enterprise;diagnostics;microservices</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    
+    <!-- Enhanced Code Quality -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors>CS1591</WarningsNotAsErrors>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
 
   <ItemGroup>

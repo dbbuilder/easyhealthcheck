@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: easyhealth-demo
+  labels:
+    app: easyhealth-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: easyhealth-demo
+  template:
+    metadata:
+      labels:
+        app: easyhealth-demo
+    spec:
+      containers:
+      - name: easyhealth-demo
+        image: easyhealth/demo:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: ASPNETCORE_URLS
+          value: "http://+:8080"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        
+        # Liveness probe - checks if the application is alive
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        
+        # Readiness probe - checks if the application is ready for traffic
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+          successThreshold: 1
+        
+        # Startup probe - gives extra time during application startup
+        startupProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 30
+          successThreshold: 1
+        
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: easyhealth-demo-service
+  labels:
+    app: easyhealth-demo
+spec:
+  selector:
+    app: easyhealth-demo
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: easyhealth-demo-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: easyhealth-demo.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: easyhealth-demo-service
+            port:
+              number: 80
+
+---
+# Service Monitor for Prometheus (optional)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: easyhealth-demo-metrics
+  labels:
+    app: easyhealth-demo
+spec:
+  selector:
+    matchLabels:
+      app: easyhealth-demo
+  endpoints:
+  - port: http
+    path: /health
+    interval: 30s
+    scrapeTimeout: 10s
